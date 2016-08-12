@@ -10,7 +10,7 @@ static uint16_t led_high = 100;
 static uint16_t led_period = 200;
 
 static uint8_t led_blink_count = 0;
-static uint8_t led_blink_amount = 0;
+static uint8_t led_blink_enable = 0;
 
 void led_initialize()
 {
@@ -34,7 +34,7 @@ void led_set_rate( uint16_t high_time, uint16_t period )
 
 void led_blink()
 {
-	++led_blink_amount;
+	led_blink_enable = 1;
 }
 
 void led_tasks()
@@ -44,12 +44,12 @@ void led_tasks()
 
 		TMR0 -= TMR0_1_MS;	// take possible jitter into account
 
-		if ( led_blink_amount ) {	// blinking has priority
+		if ( led_blink_enable ) {	// blinking has priority
 			LED = ( led_blink_count < 50 );
 
 			if ( ++led_blink_count >= 100 ) {
 				led_blink_count = 0;
-				led_blink_amount--;
+				led_blink_enable = 0;
 			}
 		} else {
 			LED = ( led_count < led_high );
